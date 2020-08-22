@@ -1,18 +1,25 @@
 use std::future::Future;
+use std::string::String;
 use futures::executor::block_on;
 
-async fn hello_world() {
-    println!("hello, world!");
+async fn hello_world(name: &String) {
+    println!("hello, {}!", name);
 }
 
-fn hello_world2() -> impl Future<Output = ()> {
-    async {
-        println!("hello, world2!");
+//below function signature causes lifetime errors
+//fn hello_world2(name: &String) -> impl Future<Output = ()> {
+
+// you must specify lifetime of argument and return value explicitly
+fn hello_world2<'a>(name: &'a String) -> impl Future<Output = ()> + 'a {
+    async move {
+        println!("hello, {}!", name);
     }
 }
 
 async fn async_main() {
-    futures::join!(hello_world(), hello_world2());
+    let name = String::from("takahashi");
+
+    futures::join!(hello_world(&name), hello_world2(&name));
 }
 
 fn main() {
