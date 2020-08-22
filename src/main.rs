@@ -4,7 +4,10 @@ async fn hello_world() {
     println!("hello, world!");
 }
 
+async fn async_main() {
+    hello_world().await;
+}
+
 fn main() {
-    let future = hello_world();
-    block_on(future);
+    block_on(async_main());
 }
